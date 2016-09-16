@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Contains install, update and uninstall hooks for the Pants module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function pants_install() {
+  variable_set('pants_default_color', 'blue');
+}
