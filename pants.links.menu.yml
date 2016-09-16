@@ -1,0 +1,6 @@
+pants.settings:
+  route_name: pants.settings
+  title: Pants
+  description: 'Administer pants colors.'
+  parent: system.admin_config_system
+  weight: 30

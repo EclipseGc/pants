@@ -1,1 +1,5 @@
-pants_default_color: 'blue'
+default_color: 'blue'
+available_colors:
+  - 'blue'
+  - 'red'
+  - 'green'

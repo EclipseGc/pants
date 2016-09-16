@@ -1,0 +1,14 @@
+pants.color:
+  path: '/pants/color/{user}'
+  defaults:
+    _title: 'Get pants color'
+    _controller: 'Drupal\pants\Controller\DefaultController::color'
+  requirements:
+    _custom_access: 'Drupal\pants\Controller\DefaultController::colorAccess'
+pants.settings:
+  path: /admin/config/system/pants
+  defaults:
+    _title: Pants
+    _form: Drupal\pants\Form\PantsSettings
+  requirements:
+    _permission: 'administer pants settings'
