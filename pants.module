@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Contains hooks implementation for the Pants module.
+ */
+
+/**
+ * Implements hook_permission().
+ */
+function pants_permission() {
+  return array(
+    'change pants status' => array(
+      'title' => t('Change pants status'),
+    ),
+    'administer pants' => array(
+      'title' => t('Administer pants'),
+    ),
+  );
+}
