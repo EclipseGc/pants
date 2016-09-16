@@ -1,0 +1,3 @@
+name = Pants
+description = Tracks pants status for users.
+core = 7.x
