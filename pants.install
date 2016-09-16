@@ -10,4 +10,5 @@
  */
 function pants_install() {
   variable_set('pants_default_color', 'blue');
+  variable_set('pants_available_colors', array('blue', 'red', 'green'));
 }

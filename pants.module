@@ -10,11 +10,83 @@
  */
 function pants_permission() {
   return array(
-    'change pants status' => array(
-      'title' => t('Change pants status'),
+    'access pants color' => array(
+      'title' => t('Access pants color'),
     ),
-    'administer pants' => array(
-      'title' => t('Administer pants'),
-    ),
+    'administer pants settings' => array(
+      'title' => t('Administer pants settings'),
+    )
   );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function pants_menu() {
+  $items['pants/color/%user'] = array(
+    'title' => 'Get pants color',
+    'page callback' => 'pants_color',
+    'page arguments' => array(2),
+    'access callback' => 'pants_color_access',
+    'type' => MENU_CALLBACK,
+    'file' => 'pants.pages.inc',
+  );
+  $items['admin/config/system/pants'] = array(
+    'title' => 'Pants',
+    'description' => 'Administer pants.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('pants_settings'),
+    'access arguments' => array('administer pants settings'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'pants.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Access callback for the pants/color/%user menu entry.
+ */
+function pants_color_access() {
+  return user_access('access pants color');
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function pants_block_info() {
+  $blocks['pants_color'] = array(
+    'info' => t('Current user\'s pants color'),
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function pants_block_view($delta) {
+  $block = array();
+
+  switch ($delta) {
+    case 'pants_color':
+      global $user;
+      $account = user_load($user->uid);
+
+      $pants_color = isset($account->pants_color[LANGUAGE_NONE][0]['value']) ? $account->pants_color[LANGUAGE_NONE][0]['value'] : variable_get('pants_default_color', 'blue');
+      
+      $block['subject'] = t('Your pants\'s color');
+      $block['content'] = array(
+        'color' => array(
+          '#markup' => t('Your pants are') . ' ' . $pants_color,
+        ),
+        'link' => array(
+          '#prefix' => '<br/>',
+          '#markup' => l(t('See details'), 'pants/color/' . $user->uid),
+        )
+      );
+      break;
+  }
+
+  return $block;
 }
