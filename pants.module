@@ -58,8 +58,52 @@ function pants_block_info() {
   $blocks['pants_color'] = array(
     'info' => t('Current user\'s pants color'),
   );
+  $blocks['pants_user_color'] = array(
+    'info' => t('Specific user\'s pants color'),
+  );
 
   return $blocks;
+}
+
+/**
+ * Implements hook_block_configure().
+ */
+function pants_block_configure($delta) {
+  $form = array();
+
+  switch ($delta) {
+    case 'pants_user_color':
+      $query = db_select('users', 'u');
+      $query->condition('u.uid', 0, '<>');
+      $query->fields('u', array('uid', 'name'));
+      $result = $query->execute();
+
+      $options = array();
+      foreach ($result as $item) {
+        $options[$item->uid] = $item->name;
+      }
+
+      $form['pants_user_color_user'] = array(
+        '#type' => 'select',
+        '#options' => $options,
+        '#default_value' => variable_get('pants_user_color_user', 1),
+        '#title' => t('Select the user to display his pants color'),
+      );
+      break;
+  }
+
+  return $form;
+}
+
+/**
+ * Implements hook_block_save().
+ */
+function pants_block_save($delta, $edit) {
+  switch ($delta) {
+    case 'pants_user_color':
+      variable_set('pants_user_color_user', $edit['pants_user_color_user']);
+      break;
+  }
 }
 
 /**
@@ -82,7 +126,24 @@ function pants_block_view($delta) {
         ),
         'link' => array(
           '#prefix' => '<br/>',
-          '#markup' => l(t('See details'), 'pants/color/' . $user->uid),
+          '#markup' => l(t('See details'), 'pants/color/' . $account->uid),
+        )
+      );
+      break;
+
+    case 'pants_user_color':
+      $account = user_load(variable_get('pants_user_color_user', 1));
+
+      $pants_color = isset($account->pants_color[LANGUAGE_NONE][0]['value']) ? $account->pants_color[LANGUAGE_NONE][0]['value'] : variable_get('pants_default_color', 'blue');
+
+      $block['subject'] = $account->name . ' ' . t('pants\'s color');
+      $block['content'] = array(
+        'color' => array(
+          '#markup' => t('Your pants are') . ' ' . $pants_color,
+        ),
+        'link' => array(
+          '#prefix' => '<br/>',
+          '#markup' => l(t('See details'), 'pants/color/' . $account->uid),
         )
       );
       break;
