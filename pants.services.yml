@@ -1,0 +1,4 @@
+services:
+  pants.color:
+    class: Drupal\pants\PantsColor
+    arguments: ['@config.factory']
