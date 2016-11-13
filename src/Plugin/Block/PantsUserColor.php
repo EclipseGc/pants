@@ -115,4 +115,12 @@ class PantsUserColor extends BlockBase  implements ContainerFactoryPluginInterfa
     ];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheTags() {
+    $user = $this->userStorage->load($this->configuration['user']);
+    return $user->getCacheTags();
+  }
+
 }
