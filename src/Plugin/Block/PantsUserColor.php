@@ -12,6 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\pants\PantsColor as PantsColorService;
 use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -33,11 +34,19 @@ class PantsUserColor extends BlockBase  implements ContainerFactoryPluginInterfa
   protected $userStorage;
 
   /**
+   * The pants color service.
+   *
+   * @var \Drupal\pants\PantsColor
+   */
+  protected $pantsColor;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, UserStorageInterface $user_storage) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, UserStorageInterface $user_storage, PantsColorService $pants_color) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->userStorage = $user_storage;
+    $this->pantsColor = $pants_color;
   }
 
   /**
@@ -48,7 +57,8 @@ class PantsUserColor extends BlockBase  implements ContainerFactoryPluginInterfa
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity.manager')->getStorage('user')
+      $container->get('entity.manager')->getStorage('user'),
+      $container->get('pants.color')
     );
   }
 
@@ -98,21 +108,26 @@ class PantsUserColor extends BlockBase  implements ContainerFactoryPluginInterfa
   public function build() {
     $user = $this->userStorage->load($this->configuration['user']);
 
-    $config = \Drupal::config('pants.settings');
-    $pants_color = isset($user->pants_color->value) ? $user->pants_color->value : $config->get('default_color');
-
     $url = Url::fromRoute('pants.color', ['user' => $user->id()]);
     $link = Link::fromTextAndUrl($this->t('See details'), $url);
 
     return [
       'color' => [
-        '#markup' => $user->getDisplayName() . ' ' . $this->t(' pants are') . ' ' . $pants_color,
+        '#markup' => $user->getDisplayName() . ' ' . $this->t(' pants are') . ' ' . $this->pantsColor->getPantsColor($user),
       ],
       'link' => [
         '#prefix' => '<br/>',
         '#markup' => $link->toString(),
       ],
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheTags() {
+    $user = $this->userStorage->load($this->configuration['user']);
+    return $user->getCacheTags();
   }
 
 }
