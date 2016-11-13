@@ -16,7 +16,10 @@ use Drupal\Core\Link;
  *
  * @Block(
  *   id = "pants_color",
- *   admin_label = @Translation("Current user's pants color")
+ *   admin_label = @Translation("Current user's pants color"),
+ *   context = {
+ *     "user" = @ContextDefinition("entity:user", label = @Translation("Current User"))
+ *   }
  * )
  */
 class PantsColor extends BlockBase {
@@ -25,7 +28,7 @@ class PantsColor extends BlockBase {
    * {@inheritdoc}
    */
   public function build() {
-    $user = \Drupal::currentUser();
+    $user = $this->getContextValue('user');
 
     $config = \Drupal::config('pants.settings');
     $pants_color = isset($user->pants_color->value) ? $user->pants_color->value : $config->get('default_color');

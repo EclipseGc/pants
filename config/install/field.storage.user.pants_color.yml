@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+    - user
+id: user.pants_color
+field_name: pants_color
+entity_type: user
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: blue
+      label: blue
+    -
+      value: red
+      label: red
+    -
+      value: green
+      label: green
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
