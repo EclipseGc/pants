@@ -6,6 +6,4 @@
 function pants_uninstall() {
   $field = \Drupal::entityTypeManager()->getStorage('field_config')->load('user.user.pants_color');
   $field->delete();
-  //$field_storage = \Drupal::entityTypeManager()->getStorage('field_storage_config')->load('user.pants_color');
-  //$field_storage->delete();
 }
