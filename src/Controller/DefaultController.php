@@ -5,6 +5,7 @@ namespace Drupal\pants\Controller;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\pants\PantsColor;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -38,7 +39,7 @@ class DefaultController extends ControllerBase {
   }
 
   public function colorAccess() {
-    return AccessResult::allowedIf(\Drupal::currentUser()->hasPermission('access pants color'));
+    return AccessResult::allowedIf($this->currentUser()->hasPermission('access pants color'));
   }
 
   public function color(AccountInterface $user) {
